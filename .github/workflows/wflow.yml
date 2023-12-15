@@ -26,3 +26,24 @@ jobs:
       run: npm run build --if-present
     - name: Run tests
       run: npm run test:unit
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+        cache: 'npm'
+    - name: Intall deps
+      run: npm install
+    - name: Build
+      run: npm run build --if-present
+    - name: Deploy to Render
+      uses: johnbeynon/render-deploy-action@v0.0.8
+      with:
+        service-id: ${{ secrets.SERVICE_ID }}
+        api-key: ${{ secrets.RENDER_TOKEN }}   
+        wait-for-success: true
