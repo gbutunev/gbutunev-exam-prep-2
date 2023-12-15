@@ -47,3 +47,20 @@ jobs:
         service-id: ${{ secrets.SERVICE_ID }}
         api-key: ${{ secrets.RENDER_TOKEN }}   
         wait-for-success: true
+  test-deployment:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+        cache: 'npm'
+    - name: Intall deps
+      run: npm install
+    - name: Install Playwright
+      run: npx playwright install                                              
+    - name: Run UI tests
+      run: npm run test:ui
